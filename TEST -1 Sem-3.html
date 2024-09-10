@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grade Activities</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        table {
+            margin: 20px auto;
+            border-collapse: collapse;
+            width: 50%;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 8px;
+            text-align: center;
+        }
+        .error {
+            color: red;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Grade Activities</h1>
+
+    <!-- Add Activity Section -->
+    <button onclick="addActivity()">Add Activity</button>
+    Activity <input type="text" id="activity" placeholder="Enter Activity">
+    Weight <input type="number" id="weight" placeholder="Enter Weight">
+
+    <!-- Add Grade Section -->
+    <br><br>
+    <button onclick="addGrade()">Add Grade</button>
+    Grade <input type="number" id="grade" placeholder="Enter Grade">
+    Activity no <input type="number" id="activityNo" placeholder="Enter Activity No">
+
+    <!-- Delete Activity Button -->
+    <br><br>
+    <button onclick="deleteActivity()">Delete Activity</button>
+
+    <!-- Activities Table -->
+    <table id="activitiesTable">
+        <thead>
+            <tr>
+                <th>No</th>
+                <th>Activity</th>
+                <th>Percentage</th>
+                <th>Grade</th>
+            </tr>
+        </thead>
+        <tbody id="activitiesBody">
+            <!-- Activities will be added here -->
+        </tbody>
+    </table>
+
+    <!-- Error Message Display -->
+    <div id="errorMessage" class="error"></div>
+
+    <script>
+        let activities = [];
+        let activityCount = 0;
+
+        function addActivity() {
+            const activity = document.getElementById("activity").value;
+            const weight = document.getElementById("weight").value;
+
+            // Validation checks
+            if (!activity) {
+                showError("Error Message: Activity name is rejected.");
+                return;
+            }
+            if (!weight || weight < 1 || weight > 100) {
+                showError("Error Message: Weight is rejected.");
+                return;
+            }
+
+            activities.push({ no: ++activityCount, name: activity, weight: weight, grade: "" });
+            renderTable();
+            clearInputs(["activity", "weight"]);
+        }
+
+        function addGrade() {
+            const grade = document.getElementById("grade").value;
+            const activityNo = document.getElementById("activityNo").value;
+
+            // Validation checks
+            if (!grade || grade < 0 || grade > 100) {
+                showError("Error Message: Grade is rejected.");
+                return;
+            }
+            if (!activities[activityNo - 1]) {
+                showError("Error Message: Activity No is rejected.");
+                return;
+            }
+
+            activities[activityNo - 1].grade = grade;
+            renderTable();
+            clearInputs(["grade", "activityNo"]);
+        }
+
+        function deleteActivity() {
+            if (activities.length === 0) {
+                showError("Error Message: No more activities to remove.");
+                return;
+            }
+
+            activities.pop();
+            renderTable();
+        }
+
+        function renderTable() {
+            const activitiesBody = document.getElementById("activitiesBody");
+            activitiesBody.innerHTML = "";
+
+            activities.forEach(activity => {
+                const row = `<tr>
+                    <td>${activity.no}</td>
+                    <td>${activity.name}</td>
+                    <td>${activity.weight}</td>
+                    <td>${activity.grade}</td>
+                </tr>`;
+                activitiesBody.innerHTML += row;
+            });
+
+            clearError();
+        }
+
+        function showError(message) {
+            document.getElementById("errorMessage").innerText = message;
+        }
+
+        function clearError() {
+            document.getElementById("errorMessage").innerText = "";
+        }
+
+        function clearInputs(ids) {
+            ids.forEach(id => document.getElementById(id).value = "");
+        }
+    </script>
+
+</body>
+</html>
